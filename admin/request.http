@@ -1,0 +1,16 @@
+POST http://127.0.0.1:8000/api/products
+Content-type: application/json
+
+{
+   "title": "birnin_goma_1248331812521737_25",
+   "image": "https://api.cloudamqp.com/img/lemur_256.png", 
+   "likes": 500
+}
+v
+###
+GET http://127.0.0.1:8000/api/products
+Content-type: application/json
+
+###
+POST http://127.0.0.1:8000/api/products/1/like
+Content-type: application/json
