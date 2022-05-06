@@ -4,8 +4,6 @@ import { createConnection } from "typeorm";
 import Product from "./entity/product";
 import amqp, { Connection, Channel } from "amqplib/callback_api";
 import chalk from "./utils/chalk-messages";
-import { DBConnect } from "./services/db-connect";
-
 
 createConnection().then((db) => {
 	

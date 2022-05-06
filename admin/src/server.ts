@@ -1,12 +1,10 @@
-import express, { Express, Request, Response, NextFunction } from "express";
-import Chalk from "./utils/chalk-messages";
+import cm from "./utils/chalk-messages";
+import { ConsumeMessage, Channel } from "amqplib";
+import ExpressApp from "./express";
+import appConfig from "./config/config";
+
 
 // SANDBOX
-import client, { Connection, ConsumeMessage, Channel } from "amqplib";
-import { DBConnect } from "./services/db-connect";
-import ExpressApp from "./express";
-import Product from "./entity/product";
-
 
 // Function to send some messages before consuming the queue
 const sendMessages = (channel: Channel) => {
@@ -14,7 +12,6 @@ const sendMessages = (channel: Channel) => {
 		channel.sendToQueue("myQueue", Buffer.from(`message ${i}`));
 	};
 };
-
 
 // consumer for the queue.
 // We use currying to give it the channel required to acknowledge the message
@@ -33,6 +30,7 @@ const consumer =
 // 
 const startServer = async () => {
 
+	// SANDBOX
 	// const ormConnection = await DBConnect();
 	// console.log({ormConnection})
 
@@ -58,18 +56,14 @@ const startServer = async () => {
 
 	// // Start the consumer
 	// await amqpChannel.consume("myQueue", consumer(amqpChannel));
-
-	const PORT = 8000;
-	// ExpressApp.listen(appConfig.port, () => {
-	ExpressApp.listen(PORT, () => {
+	ExpressApp.listen(appConfig.port, () => {
 		console.log(
-			Chalk.running(
-				// `🛡️ EXPRESS server listening on port: ${appConfig.port} 🛡️`
-				`🛡️ EXPRESS server listening on port: ${PORT} 🛡️`
+			cm.running(
+				`🛡️ EXPRESS server listening on port: ${appConfig.port} 🛡️`
 			)
 		);
 	}).on("error", (err) => {
-		console.error(Chalk.fail(err));
+		console.error(cm.fail(err));
 		process.exit(1);
 	});
 };
