@@ -1,12 +1,12 @@
-POST http://127.0.0.1:8000/api/products
+POST http://127.0.0.1:8000/api/products/
 Content-type: application/json
 
 {
-   "title": "birnin_goma_1248331812521737_25",
-   "image": "https://api.cloudamqp.com/img/lemur_256.png", 
-   "likes": 500
+   "title": "monorail_felt_909090032337_25",
+   "image": "https://api.cloudamqp.com/img/jack_haper_220.png", 
+   "likes": 20
 }
-v
+
 ###
 GET http://127.0.0.1:8000/api/products
 Content-type: application/json

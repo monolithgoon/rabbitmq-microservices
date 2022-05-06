@@ -2,7 +2,7 @@ import chalk from "chalk";
 
 const highlight = chalk.blue.bgYellowBright.bold;
 const consoleY = chalk.yellowBright.bgBlack.bold;
-const consoleBlue = chalk.blueBright.bgBlack.bold;
+const consoleB = chalk.blueBright.bgBlack.bold;
 const result = chalk.yellowBright.bgCyan.bold;
 const working = chalk.blueBright.bgGrey.bold;
 const interaction = chalk.blue.bgWhiteBright.bold;
@@ -16,8 +16,8 @@ const warningStrong = chalk.redBright.bgYellow.bold;
 
 export default {
 	highlight,
-	console,
-	consoleBlue,
+	consoleY,
+	consoleB,
 	result,
 	working,
 	interaction,

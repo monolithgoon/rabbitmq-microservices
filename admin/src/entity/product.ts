@@ -1,14 +1,14 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
-export class Product {
+export default class Product {
 	@PrimaryGeneratedColumn()
 	id!: number;
 
-	@Column()
+	@Column({unique: true})
 	title!: string;
 
-	@Column()
+	@Column({unique: true})
 	image!: string;
 
 	@Column({ default: 0 })
