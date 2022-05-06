@@ -16,7 +16,6 @@ import productRouter from "./routes/product-routes";
 import productRouter2 from "./routes/product-routes-2";
 import productRouter3 from "./routes/product-routes-3";
 import DatabaseConnection from "./services/DatabaseConnection";
-import catchServerAsync from "./utils/catch-server-async";
 import cm from "./utils/chalk-messages";
 import catchError, { catchAsyncError } from "./utils/catch-error";
 

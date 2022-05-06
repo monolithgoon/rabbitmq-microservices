@@ -46,25 +46,48 @@ export const getProduct = catchServerAsync(async function getProduct(
 	res: Response,
 	next: NextFunction
 ) {
-	const { productRepository} = req;
+	const { productRepository } = req;
 	const product = await productRepository.findOne(req.params.id);
-	return res.send(product)
+	return res.send(product);
 });
 
 export const updateProduct = catchServerAsync(async function updateProduct(
 	req: Request,
 	res: Response,
 	next: NextFunction
-) {});
+) {
+	const { productRepository, amqpChannel, requestTime } = req;
+	const product = await productRepository.findOne(req.params.id);
+	console.log(cm.highlight({ product }));
+	if (product) {
+		product && productRepository.merge(product, req.body);
+		const result = await productRepository.save(product);
+		amqpChannel.sendToQueue("product_updated", Buffer.from(JSON.stringify(result)));
+		return res.send(result);
+	};
+});
 
 export const deleteProduct = catchServerAsync(async function deleteProduct(
 	req: Request,
 	res: Response,
 	next: NextFunction
-) {});
+) {
+	const { productRepository, amqpChannel } = req;
+	const result = await productRepository.delete(req.params.id);
+	amqpChannel.sendToQueue("product_deleted", Buffer.from(req.params.id));
+	return res.send(result);
+});
 
 export const likeProduct = catchServerAsync(async function likeProduct(
 	req: Request,
 	res: Response,
 	next: NextFunction
-) {});
+) {
+	const { productRepository } = req;
+	const product = await productRepository.findOne(req.params.id);
+	if (product) {
+		product.likes++;
+		const result = await productRepository.save(product);
+		return res.send(result);
+	};
+});

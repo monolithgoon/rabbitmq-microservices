@@ -18,7 +18,7 @@ export default class CloudMessenger {
    };
 
    sendMsg(msg: string) {
-      channel.sendToQueue()
+      // channel.sendToQueue()
    }
 }
 
@@ -62,7 +62,7 @@ export class MQ_ {
    };
 
    sendMessage(msg: string) {
-      this.mqChannel?.sendToQueue(this.)
+      // this.mqChannel?.sendToQueue(this.)
    }
 }
 

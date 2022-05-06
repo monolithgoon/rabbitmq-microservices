@@ -4,7 +4,7 @@ import { createConnection } from "typeorm";
 import Product from "./entity/product";
 import amqp, { Connection, Channel } from "amqplib/callback_api";
 import chalk from "./utils/chalk-messages";
-import { DBConnect } from "./utils/db-connect";
+import { DBConnect } from "./services/db-connect";
 
 
 createConnection().then((db) => {
@@ -55,10 +55,12 @@ createConnection().then((db) => {
 			ExpressApp.put("/api/products/:id", async (req: Request, res: Response) => {
 				const product = await productRepository.findOne(req.params.id);
 				console.log(chalk.highlight({ product }));
-				productRepository.merge(product, req.body);
-				const result = await productRepository.save(product);
-				channel.sendToQueue("product_updated", Buffer.from(JSON.stringify(result)));
-				return res.send(result);
+				if (product) {
+					productRepository.merge(product, req.body);
+					const result = await productRepository.save(product);
+					channel.sendToQueue("product_updated", Buffer.from(JSON.stringify(result)));
+					return res.send(result);
+				}
 			});
 
 			ExpressApp.delete("/api/products/:id", async (req: Request, res: Response) => {
@@ -69,9 +71,11 @@ createConnection().then((db) => {
 
 			ExpressApp.post("/api/products/:id/like", async (req: Request, res: Response) => {
 				const product = await productRepository.findOne(req.params.id);
-				product.likes++;
-				const result = await productRepository.save(product);
-				return res.send(result);
+				if (product) {
+					product.likes++;
+					const result = await productRepository.save(product);
+					return res.send(result);
+				}
 			});
 
 			ExpressApp.listen(8000);
