@@ -2,7 +2,7 @@ import express, { Request, Response, NextFunction, Router } from "express";
 import { Connection } from "typeorm";
 import Product from "../entity/product";
 import DatabaseConnection from "../services/DatabaseConnection";
-import catchServerAsync from "../utils/catch-server-async-error";
+import catchAppAsync from "../utils/catch-app-asyc";
 import cm from "../utils/chalk-messages";
 
 const router: Router = express.Router();
@@ -12,7 +12,7 @@ const router: Router = express.Router();
 const ormConnection: Promise<Connection> = new DatabaseConnection().returnConnection("default");
 
 //
-const createProduct = catchServerAsync(async (req: Request, res: Response, next: NextFunction) => {
+const createProduct = catchAppAsync(async (req: Request, res: Response, next: NextFunction) => {
 	
 	console.log(cm.highlight(`called createProductHandler`));
 	console.log(cm.interaction(req.requestTime));

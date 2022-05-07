@@ -1,14 +1,15 @@
 import express, { Express, Request, Response } from "express";
 import cors from "cors";
+import axios from "axios";
 import { createConnection } from "typeorm";
 import amqp, { Connection, Channel, ConsumeMessage } from "amqplib/callback_api";
 import { Product } from "./entity/product";
-import axios from "axios";
+import cm from "./utils/chalk-messages";
 
 createConnection().then((db) => {
 	const productRepository = db.getMongoRepository(Product);
 
-	const amqpUrl = `amqps://fhzyldga:0DNCJI95lxdyn2rfdQybKP8bz-g30LgA@hawk.rmq.cloudamqp.com/fhzyldga`;
+	const amqpUrl = "amqp://fhzyldga:0DNCJI95lxdyn2rfdQybKP8bz-g30LgA@hawk.rmq.cloudamqp.com/fhzyldga"
 
 	amqp.connect(amqpUrl, (error0, connection: Connection) => {
 
@@ -22,10 +23,11 @@ createConnection().then((db) => {
 				throw error1;
 			}
 
-			channel.assertQueue("hello", {durable: false})
+			channel.assertQueue("my_test_message", {durable: false})
 			channel.assertQueue("product_created", { durable: false });
 			channel.assertQueue("product_updated", { durable: false });
 			channel.assertQueue("product_deleted", { durable: false });
+			channel.assertQueue("product_liked", { durable: false });
 
 
 			// EXPRESS INIT. && EXPRESS MIDDLEWARES
@@ -34,12 +36,11 @@ createConnection().then((db) => {
 
 			ExpressApp.use(
 				cors({
-					origin: ["http://localhost:3000", "http://localhost:8080", "http://localhost:3001"],
+					origin: ["http://localhost:3000", "http://localhost:8001", "http://localhost:3001"],
 				})
 			);
 
 			ExpressApp.use(express.json());
-
 
 			// CONSUMERS
 			channel.consume("my_test_message", async (msg: ConsumeMessage | null) => {
@@ -48,37 +49,71 @@ createConnection().then((db) => {
 
 			channel.consume("product_created",
 				async (msg: ConsumeMessage | null) => {
-					const eventProduct: Product = JSON.parse(msg.content.toString());
-					const product = new Product();
-					product.admin_product_id = parseInt(eventProduct.id);
-					product.title = eventProduct.title;
-					product.image = eventProduct.image;
-					product.likes = eventProduct.likes;
-					await productRepository.save(product);
-					console.log("product created");
+					if (msg) {
+
+						// extract product from msg.
+						const eventProduct: Product = JSON.parse(msg.content.toString());
+
+						// store event product locally
+						const product = new Product();
+						product.admin_product_id = parseInt(eventProduct.id);
+						product.title = eventProduct.title;
+						product.image = eventProduct.image;
+						product.likes = eventProduct.likes;
+
+						// save to db.
+						await productRepository.save(product);
+
+						console.log(cm.interaction("RabbitMQ message: new product created"));
+					}
 				},
 				{ noAck: true }
 			);
 
-			channel.consume("product_updated",
+			channel.consume("product_updated" || "product_liked",
 				async (msg: ConsumeMessage | null) => {
-					const eventProduct = JSON.parse(msg.content.toString());
-					const product: Product = await productRepository.findOne({admin_product_id: parseInt(eventProduct.id)});
-					productRepository.merge(product, {
-						title: eventProduct.title,
-						image: eventProduct.image,
-						likes: eventProduct.likes,
-					});
-					await productRepository.save(product);
-					console.log("product updated");
+					if (msg) {
+						const eventProduct = JSON.parse(msg.content.toString());
+						const product: Product | undefined = await productRepository.findOne({admin_product_id: parseInt(eventProduct.id)});
+						if (product) {
+							productRepository.merge(product, {
+								title: eventProduct.title,
+								image: eventProduct.image,
+								likes: eventProduct.likes,
+							});
+							await productRepository.save(product);
+							console.log(cm.interaction("RabbitMQ message: product updated"));
+						};
+					};
+				},
+				{ noAck: true }
+			);
+
+			channel.consume("product_liked",
+				async (msg: ConsumeMessage | null) => {
+					if (msg) {
+						const eventProduct = JSON.parse(msg.content.toString());
+						const product: Product | undefined = await productRepository.findOne({admin_product_id: parseInt(eventProduct.id)});
+						if (product) {
+							productRepository.merge(product, {
+								title: eventProduct.title,
+								image: eventProduct.image,
+								likes: eventProduct.likes,
+							});
+							await productRepository.save(product);
+							console.log(cm.interaction("RabbitMQ message: product liked"));
+						};
+					};
 				},
 				{ noAck: true }
 			);
 
 			channel.consume("product_deleted", async (msg: ConsumeMessage | null) => {
-				const admin_product_id = parseInt(msg.content.toString());
-				await productRepository.deleteOne({ admin_product_id });
-				console.log("product deleted");
+				if (msg) {
+					const admin_product_id = parseInt(msg.content.toString());
+					await productRepository.deleteOne({ admin_product_id });
+					console.log(cm.interaction("RabbitMQ message: product deleted"));
+				};
 			});
 
 			ExpressApp.get("/api/products", async (req: Request, res: Response) => {
@@ -88,16 +123,18 @@ createConnection().then((db) => {
 
 			ExpressApp.post("/api/products/:id/like", async (req: Request, res: Response) => {
 				const product = await productRepository.findOne(req.params.id);
-				await axios.post(
-					`http://localhost:8000/api/products/${product.admin_product_id}/like`,
-					{}
-				);
-				product.likes++;
-				await productRepository.save(product);
-				return res.send(product);
+				if (product) {
+					await axios.post(
+						`http://localhost:8000/api/products/${product.admin_product_id}/like`,
+						{}
+					);
+					product.likes++;
+					await productRepository.save(product);
+					return res.send(product);
+				}
 			});
 
-			console.log("Listening to port: 8001");
+			console.log(cm.running("Server listening on port: 8001"));
 			ExpressApp.listen(8001);
 			process.on("beforeExit", () => {
 				console.log("closing");

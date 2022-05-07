@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from "express";
-import catchServerAsync from "../utils/catch-server-async-error";
+import catchAppAsync from "../utils/catch-app-asyc";
 import cm from "../utils/chalk-messages";
 
-export const getAllProducts = catchServerAsync(async function getAllProducts(
+export const getAllProducts = catchAppAsync(async function getAllProducts(
 	req: Request,
 	res: Response,
 	next: NextFunction
@@ -16,7 +16,7 @@ export const getAllProducts = catchServerAsync(async function getAllProducts(
 	res.json(products);
 });
 
-export const createProduct = catchServerAsync(async function createProduct(
+export const createProduct = catchAppAsync(async function createProduct(
 	req: Request,
 	res: Response,
 	next: NextFunction
@@ -38,10 +38,10 @@ export const createProduct = catchServerAsync(async function createProduct(
 	}
 
 	res.status(500).json({ status: "fail", message: `Check connection to AMQP channel` });
-	// return next(new ServerError(`Check connection to AMQP channel`, 500, "createProduct"))
+	// return next(new AppError(`Check connection to AMQP channel`, 500, "createProduct"))
 });
 
-export const getProduct = catchServerAsync(async function getProduct(
+export const getProduct = catchAppAsync(async function getProduct(
 	req: Request,
 	res: Response,
 	next: NextFunction
@@ -51,7 +51,7 @@ export const getProduct = catchServerAsync(async function getProduct(
 	return res.send(product);
 });
 
-export const updateProduct = catchServerAsync(async function updateProduct(
+export const updateProduct = catchAppAsync(async function updateProduct(
 	req: Request,
 	res: Response,
 	next: NextFunction
@@ -67,7 +67,7 @@ export const updateProduct = catchServerAsync(async function updateProduct(
 	};
 });
 
-export const deleteProduct = catchServerAsync(async function deleteProduct(
+export const deleteProduct = catchAppAsync(async function deleteProduct(
 	req: Request,
 	res: Response,
 	next: NextFunction
@@ -78,16 +78,17 @@ export const deleteProduct = catchServerAsync(async function deleteProduct(
 	return res.send(result);
 });
 
-export const likeProduct = catchServerAsync(async function likeProduct(
+export const likeProduct = catchAppAsync(async function likeProduct(
 	req: Request,
 	res: Response,
 	next: NextFunction
-) {
-	const { productRepository } = req;
+	) {
+	const { productRepository, amqpChannel } = req;
 	const product = await productRepository.findOne(req.params.id);
 	if (product) {
 		product.likes++;
 		const result = await productRepository.save(product);
+		amqpChannel.sendToQueue("product_liked", Buffer.from(req.params.id));
 		return res.send(result);
 	};
 });

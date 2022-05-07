@@ -2,9 +2,17 @@ POST http://127.0.0.1:8000/api/products/
 Content-type: application/json
 
 {
-   "title": "monorail_felt_909090032337_25",
-   "image": "https://api.cloudamqp.com/img/jack_haper_220.png", 
+   "title": "bonehead_909090032337_26",
+   "image": "https://api.cloudamqp.com/img/bone_head-223.png", 
    "likes": 20
+}
+
+###
+PUT http://127.0.0.1:8000/api/products/14
+Content-type: application/json
+
+{
+   "likes": 200000
 }
 
 ###
@@ -12,5 +20,5 @@ GET http://127.0.0.1:8000/api/products
 Content-type: application/json
 
 ###
-POST http://127.0.0.1:8000/api/products/1/like
+POST http://127.0.0.1:8000/api/products/14/like
 Content-type: application/json

@@ -22,6 +22,6 @@ if (process.env.NODE_ENV === `development`) {
 
 export default Object.freeze({
 	nodeEnv: process.env.NODE_ENV,
-	port: process.env.PORT || 3000,
+	port: process.env.PORT || 8000,
 	amqpUrl: process.env.CLOUD_AMQP_URL,
 });

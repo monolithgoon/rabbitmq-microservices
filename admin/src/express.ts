@@ -9,29 +9,32 @@ import Product from "./entity/product";
 import productRouter from "./routes/product-routes";
 // import productRouter2 from "./routes/product-routes-2";
 // import productRouter3 from "./routes/product-routes-3";
-// const globalErrorHandler = require("./controllers/error-controller.js");
+import globalErrorHandler from "./controllers/global-error-handler";
 import catchError, { catchAsyncError } from "./utils/catch-error";
 import cm from "./utils/chalk-messages";
 import appConfig from "./config/config";
 
 // EXTEND THE GLOBAL INTERFACE
 declare global {
+
 	var __approotdir: string;
 
-	// REMOVE
+	// REMOVE 
 	// EXTEND REQUEST INTERFACE
 	// namespace Express {
 	// 	interface CustomRequest extends Request {
 	// 		requestTime: string,
 	// 	}
 	// }
-}
 
-// REMOVE
-// EXTEND REQUEST INTERFACE
-interface CustomRequest extends Request {
-	requestTime: string;
-}
+	// EXTEND DEFAULT ERROR TYPES
+	interface Error {
+		// code?: number
+		path?: string
+		value?: string
+		isOperational?: boolean
+	}
+};
 
 // CUSTOM REQUEST INTERFACE VIA MODULE AUGMENTATION
 declare module "express-serve-static-core" {
@@ -98,7 +101,7 @@ ExpressApp.use((req: Request, res: Response, next: NextFunction): void => {
 		// console.log({ormConnection}
 	})();
 
-	//
+	// append ormConnection to req. obj.
 	const appendOrmConnect = (req: Request, res: Response, next: NextFunction) => {
 		req.ormConnection = ormConnection;
 		next();
@@ -152,6 +155,6 @@ ExpressApp.use((req: Request, res: Response, next: NextFunction): void => {
 // ExpressApp.use("/api/products/fn-conn-db", productRouter3);
 
 // GLOBAL ERROR HANDLING M.WARE
-// ExpressApp.use(globalErrorHandler);
+ExpressApp.use(globalErrorHandler);
 
 export default ExpressApp;
