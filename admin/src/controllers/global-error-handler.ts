@@ -1,11 +1,12 @@
 import { Request, Response, NextFunction, ErrorRequestHandler } from "express";
+import HttpStatusCodes from "../consts/HttpStatusCodes";
 import AppError from "../utils/AppError";
 import cm from "../utils/chalk-messages";
 import HttpException from "../utils/HttpException";
 
 const handleCastErrorDB = (err: Error) => {
 	const message = `Invalid ${err.path}: ${err.value}`;
-   return new AppError(400, message, "deeznuts")
+   return new AppError(HttpStatusCodes.BAD_REQUEST, message, "deeznuts")
 };
 
 const sendErrorDev = (err: unknown, req: Request, res: Response) => {};
@@ -45,10 +46,11 @@ const globalErrorHandler: ErrorRequestHandler = (
 	res: Response,
 	next: NextFunction
 ) => {
+
 	if (process.env.NODE_ENV === "development") {
-      console.log(cm.result("FUCK YOU RITA"))
 		sendErrorDev(err, req, res);
 	}
+
 	if (process.env.NODE_ENV === "production") {
 
 		if (err instanceof Error) {
@@ -81,7 +83,10 @@ const globalErrorHandler: ErrorRequestHandler = (
 			// }
 
 			sendErrorProd(prodError, req, res);
-		}
+         
+		} else {
+         // TODO > IF IT ISN'T AN ERRO, WHAT THE HELL IS IT?
+      }
 	}
 };
 

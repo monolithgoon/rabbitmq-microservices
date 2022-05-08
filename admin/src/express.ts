@@ -16,10 +16,9 @@ import appConfig from "./config/config";
 
 // EXTEND THE GLOBAL INTERFACE
 declare global {
-
 	var __approotdir: string;
 
-	// REMOVE 
+	// REMOVE
 	// EXTEND REQUEST INTERFACE
 	// namespace Express {
 	// 	interface CustomRequest extends Request {
@@ -30,11 +29,11 @@ declare global {
 	// EXTEND DEFAULT ERROR TYPES
 	interface Error {
 		// code?: number
-		path?: string
-		value?: string
-		isOperational?: boolean
+		path?: string;
+		value?: string;
+		isOperational?: boolean;
 	}
-};
+}
 
 // CUSTOM REQUEST INTERFACE VIA MODULE AUGMENTATION
 declare module "express-serve-static-core" {

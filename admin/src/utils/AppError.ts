@@ -1,3 +1,5 @@
+import HttpStatusCodes from "../consts/HttpStatusCodes";
+
 export class ServerError extends Error {
 	constructor(httpStatusCode: number, message: string, caller: string) {
 		super(message); // call the parent's constructor class; assign 'message' to the message param.
@@ -23,13 +25,13 @@ export default class AppError extends Error {
 	isOperational: boolean;
 	httpStatusMessage: string
 	constructor(
-		public httpStatusCode: number,
+		public httpStatusCode: HttpStatusCodes,
 		public message: string,
 		public caller: string,
 	) {
 		super(message);
 		this.httpStatusMessage = `${httpStatusCode}`.startsWith(`4`) ? "fail" : "error";
-		this.isOperational = true;
+		this.isOperational = true; // Operational, trusted error: send message to client
 
 		// ????? don't know what this does
 		Error.captureStackTrace(this);

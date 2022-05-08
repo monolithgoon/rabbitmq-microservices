@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import cm from "./chalk-messages";
 import AppError from "./AppError";
+import HttpStatusCodes from "../consts/HttpStatusCodes";
 
 // THIS MODULE REPLACES THE try / catch BLOCK IN AN REQ/RES ASYNC FUNCTION
 export default function catchAppAsync(fn: Function, fnDescr?: string ) {
@@ -15,7 +16,7 @@ export default function catchAppAsync(fn: Function, fnDescr?: string ) {
 
 			if (asyncErr instanceof AppError) {
 
-				asyncErr.httpStatusCode = 400;
+				asyncErr.httpStatusCode = HttpStatusCodes.BAD_REQUEST;
 				if (fnDescr) asyncErr.caller = fnDescr;
 
 				// PASS TO GLOBAL ERR. HANDLER

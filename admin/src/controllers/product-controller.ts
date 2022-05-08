@@ -1,4 +1,6 @@
 import { Request, Response, NextFunction } from "express";
+import HttpStatusCodes from "../consts/HttpStatusCodes";
+import AppError from "../utils/AppError";
 import catchAppAsync from "../utils/catch-app-asyc";
 import cm from "../utils/chalk-messages";
 
@@ -21,7 +23,7 @@ export const createProduct = catchAppAsync(async function createProduct(
 	res: Response,
 	next: NextFunction
 ) {
-	const { productRepository, amqpChannel, requestTime } = req;
+	let { productRepository, amqpChannel, requestTime } = req;
 
 	if (amqpChannel) {
 		console.log(cm.highlight(`called createProductHandler`));
@@ -37,8 +39,7 @@ export const createProduct = catchAppAsync(async function createProduct(
 		return res.send(result);
 	}
 
-	res.status(500).json({ status: "fail", message: `Check connection to AMQP channel` });
-	// return next(new AppError(`Check connection to AMQP channel`, 500, "createProduct"))
+	return next(new AppError(HttpStatusCodes.INTERNAL_SERVER_ERROR, `Broken APQP channel connection; check internet connection`, `@createProduct`))
 });
 
 export const getProduct = catchAppAsync(async function getProduct(
