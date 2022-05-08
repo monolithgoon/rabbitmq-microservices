@@ -11,6 +11,7 @@ const running = chalk.blue.bgGreenBright.bold;
 const success = chalk.white.bgGreen.bold;
 const connected = chalk.white.bgBlue.bold;
 const fail = chalk.white.bgRed.bold;
+const failStrong = chalk.yellow.bgRed.bold;
 const warning = chalk.whiteBright.bgYellow.bold;
 const warningBright = chalk.yellowBright.bgYellow.bold;
 const warningStrong = chalk.redBright.bgYellow.bold;
@@ -27,6 +28,7 @@ export default {
 	success,
 	connected,
 	fail,
+	failStrong,
 	warning,
 	warningBright,
 	warningStrong,

@@ -1,3 +1,5 @@
+// ANOTHER METHOD TO LOAD ORM VARIABLES FOR:
+// DatabaseConnection.ts
 import { ConnectionOptions } from "typeorm";
 import path from "path";
 

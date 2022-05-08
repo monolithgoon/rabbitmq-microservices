@@ -13,6 +13,8 @@ import globalErrorHandler from "./controllers/global-error-handler";
 import catchError, { catchAsyncError } from "./utils/catch-error";
 import cm from "./utils/chalk-messages";
 import appConfig from "./config/config";
+import AppError from "./utils/AppError";
+import HttpStatusCodes from "./consts/HttpStatusCodes";
 
 // EXTEND THE GLOBAL INTERFACE
 declare global {
@@ -149,9 +151,23 @@ ExpressApp.use((req: Request, res: Response, next: NextFunction): void => {
 	ExpressApp.use("/api/products", appendOrmConnect, getOrmRepos, appendAmqpChannel, productRouter);
 })();
 
+// REMOVE > DEPRC.
 // MOUNT THE ROUTES
 // ExpressApp.use("/api/products/module-conn-db", productRouter2);
 // ExpressApp.use("/api/products/fn-conn-db", productRouter3);
+
+// GRACEFULLY HANDLE UNEXPRECTED ERRORS
+// TODO > FIGURE OUT HOW TO SEND THESE ERRS. TO GLOBAL ERR. HANDLER
+(function () {
+	process.on("unhandledRejection", (error: Error) => {
+		console.log(cm.failStrong(error.stack));
+		process.exitCode = 1;
+	});
+	process.on("uncaughtException", (error: Error) => {
+		console.log(cm.failStrong(error));
+		process.exitCode = 1;
+	});
+})();
 
 // GLOBAL ERROR HANDLING M.WARE
 ExpressApp.use(globalErrorHandler);

@@ -2,7 +2,7 @@ import express, { Request, Response, NextFunction, Router } from "express";
 import { Connection } from "typeorm";
 import Product from "../entity/product";
 import DatabaseConnection from "../services/DatabaseConnection";
-import catchAppAsync from "../utils/catch-app-asyc";
+import catchAppAsync from "../utils/catch-error-async";
 import cm from "../utils/chalk-messages";
 
 const router: Router = express.Router();

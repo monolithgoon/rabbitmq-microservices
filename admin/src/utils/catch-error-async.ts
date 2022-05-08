@@ -8,6 +8,7 @@ export default function catchAppAsync(fn: Function, fnDescr?: string) {
 	if (fnDescr === undefined && fn.name === undefined) fnDescr = "undef. caller";
 
 	return function (req: Request, res: Response, next: NextFunction) {
+		
 		fn(req, res, next).catch((asyncErr: Error) => {
 			
 			console.error(cm.fail(`${fnDescr}: ${asyncErr.message}`));

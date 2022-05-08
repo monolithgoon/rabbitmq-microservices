@@ -11,18 +11,5 @@
     ],
     "logging": false,
     "synchronize": true
-  },
-  {
-    "type": "mongodb",
-    "url": "mongodb+srv://monkey-paw:dooksie@monkey-paw-cluster-cwcff.gcp.mongodb.net/bamboohr_microservices?retryWrites=true&w=majority",
-    "useNewUrlParser": true,
-    "synchronize": true,
-    "logging": true,
-    "entities": [
-      "dist/entity/*.js"
-    ],
-    "cli": {
-      "entitiesDir": "dist/entity"
-    }
   }
 ]

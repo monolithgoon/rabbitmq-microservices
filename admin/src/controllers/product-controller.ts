@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import HttpStatusCodes from "../consts/HttpStatusCodes";
 import AppError from "../utils/AppError";
-import catchAppAsync from "../utils/catch-app-asyc";
+import catchAppAsync from "../utils/catch-error-async";
 import cm from "../utils/chalk-messages";
 
 export const getAllProducts = catchAppAsync(async function getAllProducts(
