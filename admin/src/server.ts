@@ -1,3 +1,4 @@
+// APP MAIN ENTRY MODULE
 import cm from "./utils/chalk-messages";
 import { ConsumeMessage, Channel } from "amqplib";
 import ExpressApp from "./express";
@@ -5,14 +6,12 @@ import appConfig from "./config/config";
 
 
 // SANDBOX
-
 // Function to send some messages before consuming the queue
 const sendMessages = (channel: Channel) => {
 	for (let i = 0; i < 10; i++) {
 		channel.sendToQueue("myQueue", Buffer.from(`message ${i}`));
 	};
 };
-
 // consumer for the queue.
 // We use currying to give it the channel required to acknowledge the message
 const consumer =
@@ -27,10 +26,11 @@ const consumer =
 	};
 
 	
-// 
 const startServer = async () => {
 
 	// SANDBOX
+	// REMOVE
+
 	// const ormConnection = await DBConnect();
 	// console.log({ormConnection})
 
@@ -56,10 +56,18 @@ const startServer = async () => {
 
 	// // Start the consumer
 	// await amqpChannel.consume("myQueue", consumer(amqpChannel));
+
 	ExpressApp.listen(appConfig.port, () => {
 		console.log(
 			cm.running(
-				`🛡️ EXPRESS server listening on port: ${appConfig.port} 🛡️`
+				`🛡️ Server listening on port: ${appConfig.port} 🛡️
+				`
+			)
+		);
+		console.log(
+			cm.running(
+				`Environment: ${appConfig.nodeEnv}
+				`
 			)
 		);
 	}).on("error", (err) => {

@@ -8,6 +8,7 @@ const handleCastErrorDB = (err: Error) => {
 	return new AppError(HttpStatusCodes.BAD_REQUEST, message, "deeznuts");
 };
 
+// handle errors in development mode
 const sendErrorDev = (err: unknown, req: Request, res: Response) => {
 
 	if (req.originalUrl.startsWith("/api")) {
@@ -29,6 +30,7 @@ const sendErrorDev = (err: unknown, req: Request, res: Response) => {
 	}
 };
 
+// handle errors in production mode
 const sendErrorProd = (err: Error, req: Request, res: Response) => {
 	// handle /api errors
 	console.log(cm.warning(req.originalUrl));
@@ -62,15 +64,19 @@ const globalErrorHandler: ErrorRequestHandler = (
 	res: Response,
 	next: NextFunction
 ) => {
+
 	if (process.env.NODE_ENV === "development") {
 		sendErrorDev(err, req, res);
-	}
+	};
 
 	if (process.env.NODE_ENV === "production") {
+
 		if (err instanceof Error) {
+
 			// copy error
 			let prodError = { ...err };
 
+         // REMOVE > REDUNDANT
 			prodError.message = err.message;
 
 			//
@@ -97,7 +103,7 @@ const globalErrorHandler: ErrorRequestHandler = (
 
 			sendErrorProd(prodError, req, res);
 		} else {
-			// TODO > IF IT ISN'T AN ERRO, WHAT THE HELL IS IT?
+			// TODO > IF EXCEPTION IT ISN'T OF TYPE ERROR, WHAT THE HELL IS IT?
 		}
 	}
 };
