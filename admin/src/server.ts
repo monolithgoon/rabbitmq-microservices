@@ -60,13 +60,7 @@ const startServer = async () => {
 	ExpressApp.listen(appConfig.port, () => {
 		console.log(
 			cm.running(
-				`🛡️ Server listening on port: ${appConfig.port} 🛡️
-				`
-			)
-		);
-		console.log(
-			cm.running(
-				`Environment: ${appConfig.nodeEnv}
+				`🛡️ [ ${appConfig.nodeEnv} ] server listening on port: ${appConfig.port} 🛡️
 				`
 			)
 		);

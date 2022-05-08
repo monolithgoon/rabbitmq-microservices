@@ -40,7 +40,7 @@ export const createProduct = catchAppAsync(async function createProduct(
 		return res.send(result);
 	}
 
-	return next(new AppError(HttpStatusCodes.INTERNAL_SERVER_ERROR, `Broken APQP channel connection; check internet connection`, `@createProduct`))
+	return next(new AppError(HttpStatusCodes.INTERNAL_SERVER_ERROR, `Broken APQP channel connection; check internet connection`, `@createProduct`));
 });
 
 export const getProduct = catchAppAsync(async function getProduct(
