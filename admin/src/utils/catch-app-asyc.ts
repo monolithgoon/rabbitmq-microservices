@@ -16,7 +16,10 @@ export default function catchAppAsync(fn: Function, fnDescr?: string ) {
 
 			if (asyncErr instanceof AppError) {
 
+				// assign http 400 errors to all catchAppAsync errors
 				asyncErr.httpStatusCode = HttpStatusCodes.BAD_REQUEST;
+
+				// check before assignment otherwise TS will complain
 				if (fnDescr) asyncErr.caller = fnDescr;
 
 				// PASS TO GLOBAL ERR. HANDLER

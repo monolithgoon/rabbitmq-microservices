@@ -15,6 +15,7 @@ export const getAllProducts = catchAppAsync(async function getAllProducts(
 	console.log(cm.interaction(requestTime));
 
 	const products = await productRepository.find();
+
 	res.json(products);
 });
 
@@ -23,7 +24,7 @@ export const createProduct = catchAppAsync(async function createProduct(
 	res: Response,
 	next: NextFunction
 ) {
-	let { productRepository, amqpChannel, requestTime } = req;
+	const { productRepository, amqpChannel, requestTime } = req;
 
 	if (amqpChannel) {
 		console.log(cm.highlight(`called createProductHandler`));

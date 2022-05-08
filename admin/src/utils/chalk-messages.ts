@@ -3,6 +3,7 @@ import chalk from "chalk";
 const highlight = chalk.blue.bgYellowBright.bold;
 const consoleY = chalk.yellowBright.bgBlack.bold;
 const consoleB = chalk.blueBright.bgBlack.bold;
+const consoleR = chalk.redBright.bgBlack.bold;
 const result = chalk.yellowBright.bgCyan.bold;
 const working = chalk.blueBright.bgGrey.bold;
 const interaction = chalk.blue.bgWhiteBright.bold;
@@ -18,6 +19,7 @@ export default {
 	highlight,
 	consoleY,
 	consoleB,
+	consoleR,
 	result,
 	working,
 	interaction,

@@ -1,5 +1,6 @@
 import HttpStatusCodes from "../consts/HttpStatusCodes";
 
+// REMOVE > DEPRC.
 export class ServerError extends Error {
 	constructor(httpStatusCode: number, message: string, caller: string) {
 		super(message); // call the parent's constructor class; assign 'message' to the message param.
@@ -20,7 +21,6 @@ export class ServerError extends Error {
 	isOperational?: boolean;
 }
 
-// SANDBOX
 export default class AppError extends Error {
 	isOperational: boolean;
 	httpStatusMessage: string
