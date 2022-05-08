@@ -12,15 +12,26 @@ const handleCastErrorDB = (err: Error) => {
 const sendErrorDev = (err: unknown, req: Request, res: Response) => {
 
 	if (req.originalUrl.startsWith("/api")) {
+      
 		if (err instanceof AppError) {
-         console.error(cm.consoleR(`ERROR 🥺🥺🥺`, err.stack));
+			console.error(cm.consoleR(`ERROR 🥺🥺🥺`, err.stack));
 			return res.status(err.httpStatusCode).json({
 				status: err.httpStatusMessage,
 				error: err,
 				message: err.message,
 			});
-		}
+		};
+
+		if (err instanceof Error) {
+			return res.status(HttpStatusCodes.BAD_REQUEST).json({
+				status: "fail",
+				error: err,
+				message: err.message,
+			});
+		};
+
 	} else {
+
 		// // 1. Log error
 		console.error(cm.consoleR(`ERROR 🥺🥺🥺`, err));
 
@@ -33,7 +44,6 @@ const sendErrorDev = (err: unknown, req: Request, res: Response) => {
 // handle errors in production mode
 const sendErrorProd = (err: Error, req: Request, res: Response) => {
 	// handle /api errors
-	console.log(cm.warning(req.originalUrl));
 	if (req.originalUrl.startsWith("/api")) {
 		// Operational, trusted error: send message to client
 		if (err.isOperational) {
@@ -47,7 +57,7 @@ const sendErrorProd = (err: Error, req: Request, res: Response) => {
 			}
 		} else {
 			// 1) Log error
-			console.error(cm.fail("ERROR 🥺", err));
+			console.error("ERROR 🥺", err);
 
 			// 2) Send error message
 			return res.status(500).json({
@@ -64,20 +74,17 @@ const globalErrorHandler: ErrorRequestHandler = (
 	res: Response,
 	next: NextFunction
 ) => {
-
 	if (process.env.NODE_ENV === "development") {
 		sendErrorDev(err, req, res);
-	};
+	}
 
 	if (process.env.NODE_ENV === "production") {
-
 		if (err instanceof Error) {
-
 			// copy error
 			let prodError = { ...err };
 
-         // REMOVE > REDUNDANT
-			prodError.message = err.message;
+			// REMOVE > REDUNDANT
+			// prodError.message = err.message;
 
 			//
 			switch (prodError.name) {

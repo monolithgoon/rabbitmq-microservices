@@ -9,6 +9,7 @@ export default function catchAppAsync(fn: Function, fnDescr?: string) {
 
 	return function (req: Request, res: Response, next: NextFunction) {
 		fn(req, res, next).catch((asyncErr: Error) => {
+			
 			console.error(cm.fail(`${fnDescr}: ${asyncErr.message}`));
 
 			// PASS TO GLOBAL ERR. HANDLER
