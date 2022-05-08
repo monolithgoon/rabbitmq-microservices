@@ -60,7 +60,6 @@ export const updateProduct = catchAppAsync(async function updateProduct(
 ) {
 	const { productRepository, amqpChannel, requestTime } = req;
 	const product = await productRepository.findOne(req.params.id);
-	console.log(cm.highlight({ product }));
 	if (product) {
 		product && productRepository.merge(product, req.body);
 		const result = await productRepository.save(product);
