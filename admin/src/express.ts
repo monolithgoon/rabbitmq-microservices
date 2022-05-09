@@ -157,7 +157,6 @@ ExpressApp.use((req: Request, res: Response, next: NextFunction): void => {
 // ExpressApp.use("/api/products/fn-conn-db", productRouter3);
 
 // GRACEFULLY HANDLE UNEXPRECTED ERRORS
-// TODO > FIGURE OUT HOW TO SEND THESE ERRS. TO GLOBAL ERR. HANDLER
 (function () {
 	process.on("unhandledRejection", (error: Error) => {
 		console.log(cm.failStrong(error.stack));

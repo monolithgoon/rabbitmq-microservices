@@ -10,9 +10,7 @@ const handleCastErrorDB = (err: Error) => {
 
 // handle errors in development mode
 const sendErrorDev = (err: unknown, req: Request, res: Response) => {
-
 	if (req.originalUrl.startsWith("/api")) {
-      
 		if (err instanceof AppError) {
 			console.error(cm.consoleR(`ERROR 🥺🥺🥺`, err.stack));
 			return res.status(err.httpStatusCode).json({
@@ -20,7 +18,7 @@ const sendErrorDev = (err: unknown, req: Request, res: Response) => {
 				error: err,
 				message: err.message,
 			});
-		};
+		}
 
 		if (err instanceof Error) {
 			return res.status(HttpStatusCodes.BAD_REQUEST).json({
@@ -28,10 +26,8 @@ const sendErrorDev = (err: unknown, req: Request, res: Response) => {
 				error: err,
 				message: err.message,
 			});
-		};
-
+		}
 	} else {
-
 		// // 1. Log error
 		console.error(cm.consoleR(`ERROR 🥺🥺🥺`, err));
 
@@ -109,8 +105,9 @@ const globalErrorHandler: ErrorRequestHandler = (
 			// }
 
 			sendErrorProd(prodError, req, res);
+         
 		} else {
-			// TODO > IF EXCEPTION IT ISN'T OF TYPE ERROR, WHAT THE HELL IS IT?
+			console.log(String(err));
 		}
 	}
 };
